@@ -56,8 +56,9 @@ function db_execute_query($query,$db_name)
 	}
 	if($result!=false)
 	{
-	 if($result)
-	 {
+		
+		if(mysqli_affected_rows($link) > 0 && !is_bool($result))
+		{
 		$table.='<table>';
 		$table.='<thead>';
 		for($i=0;$i<mysqli_num_fields($result);$i++)
@@ -88,7 +89,7 @@ function db_execute_query($query,$db_name)
 		}
 		else
 		{
-			$table='<span>Query Executed Successfully. No of rows affected is: </span>'. mysqli_affected_rows();
+			$table='<span>Query Executed Successfully. No of rows affected is: </span>'. mysqli_affected_rows($link);
 		}
 
 
