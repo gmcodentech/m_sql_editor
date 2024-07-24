@@ -21,3 +21,4 @@ A lightweight MySQL/MariaDB SQL editor written in PHP. This web application prov
 - Select the database from the drop down list.
 - Write you SQL code in the editor, use tab, enter keys for writting readable sql code.
 - Execute the query by clicking on 'Execute' button
+- The editor supports selecting the query text to be executed. Just use mouse pointer to select the query text and execute it.
