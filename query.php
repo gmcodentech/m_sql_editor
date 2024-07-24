@@ -31,11 +31,6 @@ $coun=0;
 	    mysqli_close($link);
         return $dbs;
     }
-
-    function get_fields()
-    {
-
-    }
     function db_execute_query($query,$db_name)
     {
     	global $coun;
@@ -160,7 +155,7 @@ mysqli_close($link);
 <!DOCTYPE html>
 <html>
     <head>
-        <title>MySql Query Analyzer By Gautam</title>
+        <title>M-SQL Editor</title>
 		
 		<link rel="stylesheet" href="querystyle.css">
         <script language="javascript" type="text/javascript">
