@@ -130,15 +130,16 @@ function get_select_str()
 $table_str='';
 $query_str='';
 $msg='';
+$ediHeight='200';
 try{
 if(isset($_POST['exec']) && $_POST['exec'] == 'Execute')
 {
+	 $ediHeight=$_POST['ediHt'];
 	 if(strlen($_POST['query'])!=0)
 	 {
 	  $query=$_POST['qry'];
-	  $query_str=$_POST['query'];
+	  $query_str=$_POST['query'];	  
 	  $db_name=$_POST['db'];
-	  //echo $db_name;
 	  $table_str=db_execute_query($query,$db_name);
 	 }
 	 else
@@ -160,6 +161,20 @@ catch(Exception $e){
 	
 	<link rel="stylesheet" href="querystyle.css">
 	<script language="javascript" type="text/javascript">
+		function updateHeight() {
+            var textarea = document.getElementById("query");
+            var ediHt = document.getElementById("ediHt");
+            var height = textarea.offsetHeight;
+            ediHt.value = height;
+        }
+
+        window.onload = function() {
+            var textarea = document.getElementById("query");
+            var resizeObserver = new ResizeObserver(updateHeight);
+            resizeObserver.observe(textarea);
+            updateHeight();
+        };
+		
 		function get_text()
 		{
 			 var e = document.getElementById('query');
@@ -202,8 +217,9 @@ return true;
 	<form action="'.$this_page.'" method="post">
 	<lablel>DB:</label><select name="db">'.get_select_str().'</select><input type="submit" id="exec" name="exec" value="Execute" onclick="javascript:get_text();"/><br/>
 	<span style="font-weight:bold;">TYPE QUERY:</span><br/>
-	<textarea  name="query" id="query" onkeydown="handleTabKey(event, this);" />'.$query_str.'</textarea><br/>
+	<textarea  name="query" id="query" onkeydown="handleTabKey(event, this);" style="height:'.$ediHeight.'px;" />'.$query_str.'</textarea>
 	<input type="hidden" id="qry" name="qry"/>
+	<input type="hidden" id="ediHt" name="ediHt"/>
 	</form>
 <hr/>
 
@@ -214,9 +230,5 @@ return true;
 	   </div>');
 	   ?>
 	</div>
-
-	<div>
-
-
 </body>
 </html>
