@@ -26,7 +26,7 @@ body
 					color:#222;
 					font:monospace;
 					font-size:1.3em;
-					resize: none;
+					resize: vertical;
             }
 			table {
     width: 100%;
