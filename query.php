@@ -230,10 +230,10 @@ return true;
    if($is_error){
 	$html.='<span style="color:#f00;">Error:'.$msg.'</span>';
    }else{
-	$html.='<span>Result </span>';
+	$html.='<span>Success:</span>';
    }
    if(!$is_error){
-	$html.='<span style="font-weight:bold;">Total Records:'.$coun.'</span>';
+	$html.='<span style="font-weight:bold;">Total Records - '.$coun.'</span>';
    }
    $html.='</div>
    <div style="overflow:scroll;margin:0px;padding:0px;width:auto;height:600px;">
