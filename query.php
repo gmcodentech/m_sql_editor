@@ -131,6 +131,7 @@ $table_str='';
 $query_str='';
 $msg='';
 $ediHeight='100';
+$is_error=false;
 try{
 if(isset($_POST['exec']) && $_POST['exec'] == 'Execute')
 {
@@ -149,6 +150,7 @@ if(isset($_POST['exec']) && $_POST['exec'] == 'Execute')
 }
 }
 catch(Exception $e){
+		$is_error=true;
 		$msg=$e->getMessage();
 }
 
@@ -213,7 +215,7 @@ return true;
 	<?php
 	$this_page=$_SERVER['PHP_SELF'];
 
-	echo('
+	$html = '
 	<form action="'.$this_page.'" method="post">
 	<lablel>Database:</label><select name="db" id="db_list">'.get_select_str().'</select><input type="submit" id="exec" name="exec" value="Execute" onclick="javascript:get_text();"/><br/>
 	<div style="margin:4px 0px;">Type query in the following box</div>
@@ -221,13 +223,24 @@ return true;
 	<input type="hidden" id="qry" name="qry"/>
 	<input type="hidden" id="ediHt" name="ediHt"/>
 	</form>
-<hr/>
+	<hr/>
 
-	   <div style="font-weight:bold;padding:2px;"><span>Result:'.$msg.'</span>
-	   <span style="font-weight:bold;color:#C34100">Total Records:'.$coun.'</span></div>
-	   <div style="overflow:scroll;margin:0px;padding:0px;width:auto;height:600px;">
-	   '.$table_str.'
-	   </div>');
+   <div style="font-weight:bold;padding:2px;">';
+   
+   if($is_error){
+	$html.='<span style="color:#f00;">Error:'.$msg.'</span>';
+   }else{
+	$html.='<span>Result </span>';
+   }
+   if(!$is_error){
+	$html.='<span style="font-weight:bold;">Total Records:'.$coun.'</span>';
+   }
+   $html.='</div>
+   <div style="overflow:scroll;margin:0px;padding:0px;width:auto;height:600px;">
+   '.$table_str.'
+   </div>';
+	   
+	 echo $html;
 	   ?>
 	</div>
 </body>
