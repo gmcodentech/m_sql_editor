@@ -130,7 +130,7 @@ function get_select_str()
 $table_str='';
 $query_str='';
 $msg='';
-$ediHeight='200';
+$ediHeight='100';
 try{
 if(isset($_POST['exec']) && $_POST['exec'] == 'Execute')
 {
@@ -209,23 +209,23 @@ return true;
 </head>
 <body>
 	<div id="wrapper">
-	<SPAN style="font-size:22px;font-weight:bold;">M-SQL Editor</span> <span style="font-size:14px;color:Green;font-weight:bold;">Mysql/Mariadb Query Editor</span><br/><hr/>
+	<SPAN style="font-size:22px;font-weight:bold;">M-SQL Editor</span> <span style="font-size:14px;color:teal;font-weight:bold;font-size:1em;">Mysql/Mariadb Query Editor</span><br/><hr/>
 	<?php
 	$this_page=$_SERVER['PHP_SELF'];
 
 	echo('
 	<form action="'.$this_page.'" method="post">
-	<lablel>DB:</label><select name="db">'.get_select_str().'</select><input type="submit" id="exec" name="exec" value="Execute" onclick="javascript:get_text();"/><br/>
-	<span style="font-weight:bold;">TYPE QUERY:</span><br/>
+	<lablel>Database:</label><select name="db" id="db_list">'.get_select_str().'</select><input type="submit" id="exec" name="exec" value="Execute" onclick="javascript:get_text();"/><br/>
+	<div style="margin:4px 0px;">Type query in the following box</div>
 	<textarea  name="query" id="query" onkeydown="handleTabKey(event, this);" style="height:'.$ediHeight.'px;" />'.$query_str.'</textarea>
 	<input type="hidden" id="qry" name="qry"/>
 	<input type="hidden" id="ediHt" name="ediHt"/>
 	</form>
 <hr/>
 
-	   <span style="font-weight:bold;">Result:</span>&nbsp;'.$msg.'
-	   <span style="font-weight:bold;color:#C34100">Total Records:'.$coun.'</span>
-	   <div style="overflow:scroll;margin:0px;padding:0px;width:100%px;height:300px;">
+	   <div style="font-weight:bold;padding:2px;"><span>Result:'.$msg.'</span>
+	   <span style="font-weight:bold;color:#C34100">Total Records:'.$coun.'</span></div>
+	   <div style="overflow:scroll;margin:0px;padding:0px;width:auto;height:600px;">
 	   '.$table_str.'
 	   </div>');
 	   ?>

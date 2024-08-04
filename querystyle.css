@@ -3,7 +3,7 @@
 				padding:0px;
 				margin:0px;
 				background-color:#ddd;
-				font-family: sans-serif;
+				font-family: Arial;
 		}
 		#wrapper{
 			
@@ -15,23 +15,34 @@
 		#exec{
 			background-color:#EE5F00;
 			color:white;
+			margin:0px 2px;
+			padding:4px 5px;
+			font-size:1em;
+			border: 1px solid #ccc;
 		}
 		textarea
 		{
-				width:100%;
+				width:99.2%;
 				height:200px; 
-				margin:0px;
-				padding:0px;
+				margin:2px;
+				padding:2px;
 				background-color:#fff;
 				color:#222;
-				font:monospace;
-				font-size:1.3em;
+				font-family: Arial;
+				font-size: 1em;
 				resize: vertical;
+				border: 1px solid #ccc;
+				border-radius:2px;
+		}
+		#db_list{
+			margin:0px;
+			padding:3px;
+			font-size: 1em;
 		}
 		table {
 		width: 100%;
 		border-collapse: collapse;
-		table-layout: fixed;
+		/*table-layout: fixed;*/
 		}
 
 		thead {
