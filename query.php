@@ -3,7 +3,12 @@
 $coun=0;
 
 function get_connection(){
-	return mysqli_connect('localhost', 'root', '1234');
+	$conn = mysqli_connect('localhost', 'root', '1234');
+	if(!$conn)
+	{
+		die('server not connected');
+	}
+	return $conn;
 }
 
 function db_get_database_list()
@@ -11,13 +16,8 @@ function db_get_database_list()
 
 	$dbs=array();
 	$link = get_connection();
-	if(!$link)
-	{
-		die('server not connected');
-	}
-
+	
 	$query="show databases";
-
 
 	$db_result=mysqli_query($link,$query);
 	if($db_result)
@@ -35,10 +35,6 @@ function db_execute_query($query,$db_name)
 {
 	global $coun;
 	$link = get_connection();
-	if(!$link)
-	{
-		die('server not connected');
-	}
 
 	$db=mysqli_select_db($link,$db_name);
 
@@ -94,14 +90,14 @@ function db_execute_query($query,$db_name)
 
 
 	 }
-mysqli_close($link);
-	   return $table;
+	mysqli_close($link);
+	return $table;
  }
 
 ?>
 <?php
 
-function get_select_str()
+function get_select_str($dbname)
 {
 	try{
 	$select_str='';
@@ -110,9 +106,13 @@ function get_select_str()
 	for($i=0;$i<count($db);$i++)
 	{
 		$d=$db[$i];
+		if(trim(strtolower($d->Database)) == trim(strtolower($dbname))){
+			$_POST['db']=trim(strtolower($dbname));
+		}
+
 		if(isset($_POST['db']) && $d->Database == $_POST['db'])
 		{
-			$select_str.='<option value="'.$d->Database.'" selected>'.$d->Database.'</option>';
+			$select_str.='<option value="'.$d->Database.'" selected="selected">'.$d->Database.'</option>';
 		}
 		else
 		{
@@ -132,6 +132,7 @@ $query_str='';
 $msg='';
 $ediHeight='100';
 $is_error=false;
+$sel_db = '';
 try{
 if(isset($_POST['exec']) && $_POST['exec'] == 'Execute')
 {
@@ -139,7 +140,8 @@ if(isset($_POST['exec']) && $_POST['exec'] == 'Execute')
 	 if(strlen($_POST['query'])!=0)
 	 {
 	  $query=$_POST['qry'];
-	  $query_str=$_POST['query'];	  
+	  $query_str=$_POST['query'];
+	  $sel_db = check_for_use_db($query);
 	  $db_name=$_POST['db'];
 	  $table_str=db_execute_query($query,$db_name);
 	 }
@@ -152,6 +154,15 @@ if(isset($_POST['exec']) && $_POST['exec'] == 'Execute')
 catch(Exception $e){
 		$is_error=true;
 		$msg=$e->getMessage();
+}
+
+function check_for_use_db($query){
+	$words = preg_split('/\s+/',$query);
+	if(count($words)==2 && strtolower(trim($words[0]))=='use'){
+		return trim($words[1]);
+	}
+	
+	return '';
 }
 
 ?>
@@ -217,7 +228,7 @@ return true;
 
 	$html = '
 	<form action="'.$this_page.'" method="post">
-	<lablel>Database:</label><select name="db" id="db_list">'.get_select_str().'</select><input type="submit" id="exec" name="exec" value="Execute" onclick="javascript:get_text();"/><br/>
+	<lablel>Database:</label><select name="db" id="db_list">'.get_select_str($sel_db).'</select><input type="submit" id="exec" name="exec" value="Execute" onclick="javascript:get_text();"/><br/>
 	<div style="margin:4px 0px;">Type query in the following box</div>
 	<textarea  name="query" id="query" onkeydown="handleTabKey(event, this);" style="height:'.$ediHeight.'px;" />'.$query_str.'</textarea>
 	<input type="hidden" id="qry" name="qry"/>
@@ -230,10 +241,10 @@ return true;
    if($is_error){
 	$html.='<span style="color:#f00;">Error:'.$msg.'</span>';
    }else{
-	$html.='<span>Success:</span>';
+	$html.='<span>Success,</span>';
    }
    if(!$is_error){
-	$html.='<span style="font-weight:bold;">Total Records - '.$coun.'</span>';
+	$html.='<span style="font-weight:bold;">Total Records : '.$coun.'</span>';
    }
    $html.='</div>
    <div style="overflow:scroll;margin:0px;padding:0px;width:auto;height:600px;">
