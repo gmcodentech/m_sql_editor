@@ -137,7 +137,7 @@ function get_select_str($dbname)
 $table_str='';
 $query_str='';
 $msg='';
-$ediHeight='100';
+$ediHeight='80';
 $is_error=false;
 $sel_db = '';
 
@@ -325,7 +325,7 @@ return true;
 	$html.='<span style="font-weight:bold;">Total Records : '.$coun.'</span>';
    }
    $html.='</div>
-   <div style="overflow:scroll;margin:0px;padding:0px;width:auto;height:600px;">
+   <div style="overflow:scroll;margin:0px;padding:0px;width:auto;height:450px;">
    '.$table_str.'
    </div>';
 	   
