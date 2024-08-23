@@ -1,9 +1,14 @@
 <?php
-
+session_start();
 $coun=0;
-
+$show_login = !(isset($_SESSION['logged_in']) && $_SESSION['logged_in']==true) ?? true;
+$login_error = '';
+$host='localhost';
+$user='';
+$pwd='';
 function get_connection(){
-	$conn = mysqli_connect('localhost', 'root', '1234');
+	
+	$conn = mysqli_connect($_SESSION['host'], $_SESSION['user'], $_SESSION['pass']);
 	if(!$conn)
 	{
 		die('server not connected');
@@ -15,6 +20,7 @@ function db_get_database_list()
 {
 
 	$dbs=array();
+	
 	$link = get_connection();
 	
 	$query="show databases";
@@ -29,6 +35,7 @@ function db_get_database_list()
 	}
 
 	mysqli_close($link);
+	//}
 	return $dbs;
 }
 function db_execute_query($query,$db_name)
@@ -133,6 +140,49 @@ $msg='';
 $ediHeight='100';
 $is_error=false;
 $sel_db = '';
+
+if(isset($_POST['login_btn']) && $_POST['login_btn'] == 'Connect'){
+	
+	$success=false;
+	
+	$host=$_POST['hostname'];
+	$user=$_POST['username'];
+	$pass=$_POST['password'];
+	try{
+		$conn = mysqli_connect($host, $user, $pass);
+		if(!$conn)
+		{
+			$success=false;
+		}
+		else{
+			mysqli_select_db($conn,'mysql');
+			$success = mysqli_query($conn,"select count(1) as result from user where host='{$host}' and user='{$user}' and password=password('{$pass}');")
+				->fetch_object()
+				->result == 1;
+			$show_login=false;
+			$_SESSION['logged_in']=true;
+		}
+	}
+	catch(Exception $e){
+		$login_error=$e->getMessage();
+	}
+	
+	if(!$success){
+		$login_error='cannot connect to server';
+	}else{
+		$_SESSION['user']=$user;
+		$_SESSION['host']=$host;
+		$_SESSION['pass']=$pass;
+		$show_login=false;
+	}
+}
+
+if(isset($_POST['logout']) && $_POST['logout']=='Disconnect'){
+	session_destroy();
+	$show_login=true;
+	$_SESSION['logged_in']=false;
+}
+
 try{
 if(isset($_POST['exec']) && $_POST['exec'] == 'Execute')
 {
@@ -156,6 +206,8 @@ catch(Exception $e){
 		$msg=$e->getMessage();
 }
 
+
+
 function check_for_use_db($query){
 	$words = preg_split('/\s+/',$query);
 	if(count($words)==2 && strtolower(trim($words[0]))=='use'){
@@ -164,6 +216,8 @@ function check_for_use_db($query){
 	
 	return '';
 }
+
+
 
 ?>
 
@@ -222,9 +276,33 @@ return true;
 </head>
 <body>
 	<div id="wrapper">
-	<SPAN style="font-size:22px;font-weight:bold;">M-SQL Editor</span> <span style="font-size:14px;color:teal;font-weight:bold;font-size:1em;">Mysql/Mariadb Query Editor</span><br/><hr/>
 	<?php
 	$this_page=$_SERVER['PHP_SELF'];
+	if($show_login){
+	$login_html = '<div id="login"><form action="'.$this_page.'" method="post">';
+	$login_html .= '<span style="margin-left:10px;">Host: </span><input type="input" name="hostname" value="'.$host.'"/>';
+	$login_html .= '<span style="margin-left:10px;">Username: </span><input type="input" name="username" value="'.$user.'"/>';
+	$login_html .= '<span style="margin-left:10px;">Password: </span><input name="password" type="password" value="'.$pwd.'"/>';
+	$login_html .= '<input type="submit" value="Connect" class="btn" id="login_btn" name="login_btn"/>';
+	$login_html .= '<div style="margin-left:10px;" id="login_error">'.$login_error.'</div>';
+	$login_html .= '</form></div>';
+	echo $login_html;
+	}
+	?>
+	<div>
+	<form action="<?php echo $this_page; ?>" method="post">
+	<SPAN style="font-size:22px;font-weight:bold;">M-SQL Editor</span> <span style="font-size:14px;color:teal;font-weight:bold;font-size:1em;">Mysql/Mariadb Query Editor</span>
+	<?php
+	if(!$show_login){
+		echo '<span style="float:right;padding-right:3px;"><input type="submit" value="Disconnect" name="logout" class="btn"/></span><br/>';
+	}
+	?>
+	</form>
+	</div>
+	<hr/>
+	<?php
+	
+	if(!$show_login){
 
 	$html = '
 	<form action="'.$this_page.'" method="post">
@@ -251,7 +329,8 @@ return true;
    '.$table_str.'
    </div>';
 	   
-	 echo $html;
+   echo $html;
+   }
 	   ?>
 	</div>
 </body>
