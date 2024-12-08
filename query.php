@@ -6,6 +6,7 @@ $login_error = '';
 $host='localhost';
 $user='';
 $pwd='';
+$scroll_position=0;
 function get_connection(){
 	
 	$conn = mysqli_connect($_SESSION['host'], $_SESSION['user'], $_SESSION['pass']);
@@ -155,10 +156,11 @@ if(isset($_POST['login_btn']) && $_POST['login_btn'] == 'Connect'){
 			$success=false;
 		}
 		else{
-			mysqli_select_db($conn,'mysql');
-			$success = mysqli_query($conn,"select count(1) as result from user where host='{$host}' and user='{$user}' and password=password('{$pass}');")
-				->fetch_object()
-				->result == 1;
+			// mysqli_select_db($conn,'mysql');
+			// $success = mysqli_query($conn,"select count(1) as result from user where host='{$host}' and user='{$user}' and password=password('{$pass}');")
+				// ->fetch_object()
+				// ->result == 1;
+			$success = true;
 			$show_login=false;
 			$_SESSION['logged_in']=true;
 		}
@@ -191,6 +193,7 @@ if(isset($_POST['exec']) && $_POST['exec'] == 'Execute')
 	 {
 	  $query=$_POST['qry'];
 	  $query_str=$_POST['query'];
+	  $scroll_position=$_POST['scrpos'];
 	  $sel_db = check_for_use_db($query);
 	  $db_name=$_POST['db'];
 	  $table_str=db_execute_query($query,$db_name);
@@ -240,6 +243,8 @@ function check_for_use_db($query){
             var resizeObserver = new ResizeObserver(updateHeight);
             resizeObserver.observe(textarea);
             updateHeight();
+			var sp = document.getElementById("scrpos");
+			textarea.scrollTop=sp.value;
         };
 		
 		function get_text()
@@ -250,13 +255,13 @@ function check_for_use_db($query){
 			 if(e.value.substr(e.selectionStart, l).length>0)
 			 {
 				 q.value =e.value.substr(e.selectionStart, l);
-
 			 }
 			 else
 			 {
 				  q.value = e.value;
 			 }
-
+			var sp = document.getElementById("scrpos");
+			sp.value=e.scrollTop;
 			 return true;
 		}
 		
@@ -311,6 +316,7 @@ return true;
 	<textarea  name="query" id="query" onkeydown="handleTabKey(event, this);" style="height:'.$ediHeight.'px;" />'.$query_str.'</textarea>
 	<input type="hidden" id="qry" name="qry"/>
 	<input type="hidden" id="ediHt" name="ediHt"/>
+	<input type="hidden" id="scrpos" name="scrpos" value="'.$scroll_position.'"/>
 	</form>
 	<hr/>
 
